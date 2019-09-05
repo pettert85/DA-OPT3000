@@ -1,4 +1,11 @@
 <?php
+/*
+Learning to write some simple algorithms in php
+
+
+*/
+
+
 //variable definitions
 $init_route;
 
