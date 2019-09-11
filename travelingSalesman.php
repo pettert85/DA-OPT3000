@@ -1,6 +1,7 @@
 <?php
 /*
 Learning to write some simple algorithms in php
+From work PC
 */
 
 
