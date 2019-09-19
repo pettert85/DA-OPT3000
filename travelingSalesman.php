@@ -11,6 +11,7 @@ printf("Choose size of matrix (random numbers) or type fixed(default)
     4: 500 x 500
     default(fixed) == enter:
     Enter your choice: ");
+    
 
 $choice = fgets(STDIN); //read from user
 switch ($choice){
@@ -66,20 +67,49 @@ $choice = fgets(STDIN);
 switch($choice){
     case(1):
         $init_route = random_initial($num_cities,$visited);
-        printf("Sum: %d\n", distance_calc($init_route,$city_matrix));
+        $inital_sum = distance_calc($init_route,$city_matrix);
+        printf("Random Inital sum: %d\n",$inital_sum);
         break;
     case(2):
         printf("choice 2\n");
         $init_route = interative_random($num_cities,$visited,$city_matrix);
-        printf("Sum: %d\n", distance_calc($init_route,$city_matrix));
+        $inital_sum = distance_calc($init_route,$city_matrix);
+        printf("Iterative Random Initial Sum: %d\n",$init);
         break;
     case(3):
         printf("choice 3\n");
          $init_route = greedy_algorithm($num_cities,$visited,$city_matrix);
-        printf("Sum: %d\n", distance_calc($init_route,$city_matrix));
+         $inital_sum = distance_calc($init_route,$city_matrix);
+        printf("Greedy Algorithm Inital sum: %d\n",$inital_sum);
         break;
     default:
 }
+
+printf("Improve your result using the following options:
+    1: Greedy Huristic
+    2: something else
+    default - no improvements\n Method for improvement: " );
+$choice = fgets(STDIN);
+switch ($choice) {
+    case 1:
+        $improved_route = greedy_improvement($init_route,$city_matrix);
+        $improved_sum = distance_calc($improved_route,$city_matrix);
+        printf("Sum with Greey Huristic Algorithm: %s\n",$improved_sum);
+        break;
+    case 2:
+        # code...
+        break;
+    
+    default:
+        printf("Goodbye\n");
+        break;
+}
+
+$percentage = (($inital_sum - $improved_sum) / $inital_sum) * 100;
+printf("RESULTS:
+    Inital: %d
+    Improved: %d
+    Improved Percentage: %d%%\n",$inital_sum,$improved_sum,$percentage);
 
 /*A random function that return only a random route*/
 
@@ -165,6 +195,44 @@ function greedy_algorithm($num_cities,$visited,$city_matrix){
 
 }
 
+
+function greedy_improvement($init_route,$city_matrix){
+    for($i = 0; $i < 1000; $i++){
+        $inital_sum = distance_calc($init_route,$city_matrix); //sum of our initial route
+
+        //get two new positions in matrix to swap
+        do {
+            $position1 = mt_rand(0, count($init_route)-1);
+            $position2 = mt_rand(0, count($init_route)-1);
+        }while($position1 == $position2);
+        
+        $temp = $init_route[$position1]; //keep city number
+        
+        //swap city locations in an attempt to improve the result
+        $init_route[$position1] = $init_route[$position2];
+        $init_route[$position2] = $temp;
+        
+
+        $new_sum = distance_calc($init_route,$city_matrix);
+
+        //let the algorithm choose wther equal matrices should be reverted or not(no human interactions please :)) 
+
+        $make_change =(boolean)mt_rand(0, 1);
+
+        //revert change if the sum was not improved or if it was equal and the algorithm wants to revert it.
+        if($new_sum > $inital_sum || ($new_sum == $inital_sum && $make_change)){
+
+            $temp = $init_route[$position1]; //keep city number
+            
+            //swap city locations in an attempt to improve the result
+            $init_route[$position1] = $init_route[$position2];
+            $init_route[$position2] = $temp;
+        
+        }
+    }
+
+    return $init_route;
+}
 
 /*
 Calculates and return the total distance of the route provided
