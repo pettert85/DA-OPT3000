@@ -9,7 +9,7 @@ printf("Choose size of matrix (random numbers) or type fixed(default)
     2: 100 x 100
     3: 250 x 250
     4: 500 x 500
-    default(fixed) == enter:
+    default(fixed 5*5 test matrix) == enter:
     Enter your choice: ");
     
 
@@ -33,13 +33,25 @@ switch ($choice){
         break;
 
     default:    
+       /* 4x4
+            
         $city_matrix = array
         (
         array(0,15,10,5),
         array(15,0,12,7),
         array(10,12,0,8),
         array(5,7,8,0)
-        );  
+        ); */ 
+
+        //fixed 5*5 test matrix
+        $city_matrix = array
+        (
+        array(0,10,6,3,7),
+        array(10,0,4,2,1),
+        array(6,4,0,4,9),
+        array(3,2,4,0,7),
+        array(7,1,9,7,0)
+        );
         break;
 }
 
@@ -59,7 +71,8 @@ for($i=0; $i < $num_cities + 10; $i++){
 printf("
 1: Random
 2: Iterative Random
-3: Greedy Algorithm\n");
+3: Greedy Algorithm
+default: Crazy-mode-comparison(all)\n");
 
 printf("Choose method for the initial solution: ");
 $choice = fgets(STDIN);
@@ -68,26 +81,65 @@ $choice = fgets(STDIN);
 switch($choice){
     case(1):
         $init_route = random_initial($num_cities,$visited);
+        //$init_route= [0,1,2,4,3];
         $inital_sum = distance_calc($init_route,$city_matrix);
         printf("Random Inital sum: %d\n",$inital_sum);
+        var_dump($init_route);
         break;
     case(2):
         printf("choice 2\n");
         $init_route = interative_random($num_cities,$visited,$city_matrix);
         $inital_sum = distance_calc($init_route,$city_matrix);
         printf("Iterative Random Initial Sum: %d\n",$inital_sum);
+        var_dump($init_route);
         break;
     case(3):
         printf("choice 3\n");
          $init_route = greedy_algorithm($num_cities,$visited,$city_matrix);
          $inital_sum = distance_calc($init_route,$city_matrix);
         printf("Greedy Algorithm Inital sum: %d\n",$inital_sum);
+        var_dump($init_route);
         break;
     default:
+        printf("All against all - using the same matrix\n");
+        printf("--------------------------------------------------------------------------\n");
+
+        //Random initial
+        $random = random_initial($num_cities,$visited);
+        $random_heuristic = greedy_heuristic($random,$city_matrix);
+        $random_greedy = greedy_random($random,$city_matrix,0.9);
+
+        printf("Random-->Inital: %d\n", distance_calc($random,$city_matrix));
+        printf("Random-->Heuristic: %d\n", distance_calc($random_heuristic,$city_matrix));
+        printf("Random-->Greedy Random: %d\n", distance_calc($random_greedy,$city_matrix));
+        printf("--------------------------------------------------------------------------\n");
+
+        //Itterative initial
+        $itterative = interative_random($num_cities,$visited,$city_matrix);
+        $itterative_heuristic = greedy_heuristic($itterative,$city_matrix);
+        $itterative_greedy = greedy_random($itterative,$city_matrix,0.9);
+
+        printf("Itterative--> Initial: %d\n", distance_calc($itterative,$city_matrix));
+        printf("Itterative-->Heuristic: %d\n", distance_calc($itterative_heuristic,$city_matrix));
+        printf("Itterative-->Greedy Random: %d\n", distance_calc($itterative_greedy,$city_matrix));
+        printf("--------------------------------------------------------------------------\n");
+
+        //Greedy initial
+        $greedy = greedy_algorithm($num_cities,$visited,$city_matrix);
+        $greedy_heuristic = greedy_heuristic($greedy,$city_matrix);
+        $greedy_greedy = greedy_random($greedy,$city_matrix,0.9);
+        
+
+        printf("Greedy--> Initial: %d\n", distance_calc($greedy,$city_matrix));
+        printf("Greedy-->Heuristic: %d\n", distance_calc($greedy_heuristic,$city_matrix));
+        printf("Greedy-->Greedy Random: %d\n", distance_calc($greedy_greedy,$city_matrix));
+        printf("--------------------------------------------------------------------------\n");
+
+        exit(0);
 }
 
 printf("Improve your result using the following options:
-    1: Greedy Huristic Algorithm
+    1: Greedy Heuristic Algorithm
     2: Greedy Random Algorithm
     default - no improvements\n Method for improvement: " );
 $choice = fgets(STDIN);
@@ -96,11 +148,13 @@ switch ($choice) {
         $improved_route = greedy_heuristic($init_route,$city_matrix);
         $improved_sum = distance_calc($improved_route,$city_matrix);
         printf("Sum with Greedy Heuristic Algorithm: %s\n",$improved_sum);
+        var_dump($improved_route);
         break;
     case 2:
         $improved_route = greedy_random($init_route,$city_matrix,0.9);
         $improved_sum = distance_calc($improved_route,$city_matrix);
         printf("Sum with Greedy Random Algorithm: %s\n",$improved_sum);
+        var_dump($improved_route);
         break;
     
     default:
@@ -174,7 +228,7 @@ function greedy_algorithm($num_cities,$visited,$city_matrix){
 
     //generate random starting point
     $visited_index = mt_rand(0, $num_cities - 1); //Start in random city
-    $visited[$visited_index] = TRUE; //Starting city is visited
+    $visited[$visited_index] = TRUE; //city is marked as visited
     $route[$route_index] = $visited_index; //update route with the first city
     $route_index++;
 
@@ -190,6 +244,7 @@ function greedy_algorithm($num_cities,$visited,$city_matrix){
         $visited[$visited_index] = TRUE;
         $route[$route_index] =$visited_index;
         $route_index++;
+        
         $best = max($city_matrix);
     }
     
@@ -238,6 +293,7 @@ function greedy_heuristic($init_route,$city_matrix){
 }
 
 function greedy_random($init_route,$city_matrix,$probability_of_acceptance){
+    
     //best route and cost for the current local optimum
     $local_optimum_sum = distance_calc($init_route,$city_matrix);
     $local_optimum_matrice = $init_route;
@@ -246,32 +302,36 @@ function greedy_random($init_route,$city_matrix,$probability_of_acceptance){
     $global_optimum_sum = $local_optimum_sum;
     $global_optimium_matrice = $local_optimum_matrice;
 
-    $new_local_matrice = $local_optimum_matrice;
-    
     do{
-        for($i = 0; $i < 1000; $i++){
-            //shake up the local optimum randomly
+        //????????????globally best again or locally best?????????????
+        //$new_local_matrice = $local_optimum_matrice;
+        //$new_local_sum = $local_optimum_sum;
+        $new_local_matrice = $global_optimium_matrice;
+        $new_local_sum = $global_optimum_sum;
 
-            
+        for($i = 0; $i < 1000; $i++){            
 
+            //find two new random positions       
             do {
                 $position1 = mt_rand(0, count($new_local_matrice)-1);
                 $position2 = mt_rand(0, count($new_local_matrice)-1);
             }while($position1 == $position2);
         
-            $temp = $new_local_matrice[$position1]; //keep city number
+            $temp = $new_local_matrice[$position1];
         
             //swap city locations in an attempt to improve the result
             $new_local_matrice[$position1] = $new_local_matrice[$position2];
             $new_local_matrice[$position2] = $temp;
 
-            //caclulate sum
-            $new_local_sum = distance_calc($local_optimum_matrice,$city_matrix);
+            //caclulate sum of new matrix
+            $new_local_sum = distance_calc($new_local_matrice,$city_matrix);
             
+            //check if it's a new local optimum
             if($new_local_sum < $local_optimum_sum){
                 $local_optimum_sum = $new_local_sum;
                 $local_optimum_matrice = $new_local_matrice;
                 
+                //always keep the absolute best solution globally
                 if($local_optimum_sum < $global_optimum_sum){
                     $global_optimum_sum = $local_optimum_sum;
                     $global_optimium_matrice = $local_optimum_matrice;
@@ -279,19 +339,23 @@ function greedy_random($init_route,$city_matrix,$probability_of_acceptance){
             }
 
             else{
-
+                //accept a worse solution more often when probability_of_acceptance is high
                 if( mt_rand(1, 100) / 100 < $probability_of_acceptance){
-                    //Tries to find a new local optimum by shaking things up a bit
                     $local_optimum_matrice = $new_local_matrice;
                     $local_optimum_sum = $new_local_sum;
                     
                 }
 
-                $new_local_matrice = $local_optimum_matrice;
+                //else we reject the newly proposed matrix
+                else{
+                    
+                    $new_local_matrice = $local_optimum_matrice;
+                    $new_local_sum = $local_optimum_sum;
+                }
             }
         }
 
-        //decrease our probability by 10% each time while loop runs
+        //decrease our probability by 10% each time do-while loop runs
         $probability_of_acceptance = $probability_of_acceptance * 0.9;
 
     }while($probability_of_acceptance > 0.0000001);
@@ -319,9 +383,7 @@ function distance_calc($route, $city_matrix){
 }
 
 function matrix_generator($size){
-    $city_matrix =[$size][$size];
-
-
+  
     for($i = 0; $i < $size; $i++){
         for($j = 0; $j < $size; $j++){
                 $city_matrix[$i][$j] = NULL;
