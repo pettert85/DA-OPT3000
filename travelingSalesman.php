@@ -14,6 +14,7 @@ printf("Choose size of matrix (random numbers) or type fixed(default)
     
 
 $choice = fgets(STDIN); //read from user
+
 switch ($choice){
     case 1:
         $city_matrix = matrix_generator(50);
@@ -74,7 +75,7 @@ switch($choice){
         printf("choice 2\n");
         $init_route = interative_random($num_cities,$visited,$city_matrix);
         $inital_sum = distance_calc($init_route,$city_matrix);
-        printf("Iterative Random Initial Sum: %d\n",$init);
+        printf("Iterative Random Initial Sum: %d\n",$inital_sum);
         break;
     case(3):
         printf("choice 3\n");
@@ -86,18 +87,20 @@ switch($choice){
 }
 
 printf("Improve your result using the following options:
-    1: Greedy Huristic
-    2: something else
+    1: Greedy Huristic Algorithm
+    2: Greedy Random Algorithm
     default - no improvements\n Method for improvement: " );
 $choice = fgets(STDIN);
 switch ($choice) {
     case 1:
-        $improved_route = greedy_improvement($init_route,$city_matrix);
+        $improved_route = greedy_heuristic($init_route,$city_matrix);
         $improved_sum = distance_calc($improved_route,$city_matrix);
-        printf("Sum with Greey Huristic Algorithm: %s\n",$improved_sum);
+        printf("Sum with Greedy Heuristic Algorithm: %s\n",$improved_sum);
         break;
     case 2:
-        # code...
+        $improved_route = greedy_random($init_route,$city_matrix,0.9);
+        $improved_sum = distance_calc($improved_route,$city_matrix);
+        printf("Sum with Greedy Random Algorithm: %s\n",$improved_sum);
         break;
     
     default:
@@ -196,7 +199,7 @@ function greedy_algorithm($num_cities,$visited,$city_matrix){
 }
 
 
-function greedy_improvement($init_route,$city_matrix){
+function greedy_heuristic($init_route,$city_matrix){
     for($i = 0; $i < 1000; $i++){
         $inital_sum = distance_calc($init_route,$city_matrix); //sum of our initial route
 
@@ -232,6 +235,69 @@ function greedy_improvement($init_route,$city_matrix){
     }
 
     return $init_route;
+}
+
+function greedy_random($init_route,$city_matrix,$probability_of_acceptance){
+    //best route and cost for the current local optimum
+    $local_optimum_sum = distance_calc($init_route,$city_matrix);
+    $local_optimum_matrice = $init_route;
+
+    //best overall (globally) route and cost are set initally
+    $global_optimum_sum = $local_optimum_sum;
+    $global_optimium_matrice = $local_optimum_matrice;
+
+    $new_local_matrice = $local_optimum_matrice;
+    
+    do{
+        for($i = 0; $i < 1000; $i++){
+            //shake up the local optimum randomly
+
+            
+
+            do {
+                $position1 = mt_rand(0, count($new_local_matrice)-1);
+                $position2 = mt_rand(0, count($new_local_matrice)-1);
+            }while($position1 == $position2);
+        
+            $temp = $new_local_matrice[$position1]; //keep city number
+        
+            //swap city locations in an attempt to improve the result
+            $new_local_matrice[$position1] = $new_local_matrice[$position2];
+            $new_local_matrice[$position2] = $temp;
+
+            //caclulate sum
+            $new_local_sum = distance_calc($local_optimum_matrice,$city_matrix);
+            
+            if($new_local_sum < $local_optimum_sum){
+                $local_optimum_sum = $new_local_sum;
+                $local_optimum_matrice = $new_local_matrice;
+                
+                if($local_optimum_sum < $global_optimum_sum){
+                    $global_optimum_sum = $local_optimum_sum;
+                    $global_optimium_matrice = $local_optimum_matrice;
+                }
+            }
+
+            else{
+
+                if( mt_rand(1, 100) / 100 < $probability_of_acceptance){
+                    //Tries to find a new local optimum by shaking things up a bit
+                    $local_optimum_matrice = $new_local_matrice;
+                    $local_optimum_sum = $new_local_sum;
+                    
+                }
+
+                $new_local_matrice = $local_optimum_matrice;
+            }
+        }
+
+        //decrease our probability by 10% each time while loop runs
+        $probability_of_acceptance = $probability_of_acceptance * 0.9;
+
+    }while($probability_of_acceptance > 0.0000001);
+
+    return $global_optimium_matrice;
+
 }
 
 /*
