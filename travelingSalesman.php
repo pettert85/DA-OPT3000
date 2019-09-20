@@ -1,7 +1,6 @@
 <?php
 /*
 Learning to write some simple algorithms in php
-From laptop
 */
 
 printf("Choose size of matrix (random numbers) or type fixed(default)
