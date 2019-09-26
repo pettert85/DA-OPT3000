@@ -104,34 +104,66 @@ switch($choice){
         printf("--------------------------------------------------------------------------\n");
 
         //Random initial
+        $start = microtime(1);
         $random = random_initial($num_cities,$visited);
-        $random_heuristic = greedy_heuristic($random,$city_matrix);
-        $random_greedy = greedy_random($random,$city_matrix,0.9);
+        $stop = microtime(1);
+        $time=$stop - $start;
+        printf("Random-->Inital: %d -->time: %f\n", distance_calc($random,$city_matrix),$time);
 
-        printf("Random-->Inital: %d\n", distance_calc($random,$city_matrix));
-        printf("Random-->Heuristic: %d\n", distance_calc($random_heuristic,$city_matrix));
-        printf("Random-->Greedy Random: %d\n", distance_calc($random_greedy,$city_matrix));
+        $start = microtime(1);
+        $random_heuristic = greedy_heuristic($random,$city_matrix);
+        $stop = microtime(1);
+        $time=$stop - $start;
+        printf("Random-->Heuristic: %d -->time: %f\n", distance_calc($random_heuristic,$city_matrix),$time);
+
+        $start = microtime(1);
+        $random_greedy = greedy_random($random,$city_matrix,0.9);
+        $stop = microtime(1);
+        $time=$stop - $start;
+        printf("Random-->Greedy Random: %d -->time: %f\n", distance_calc($random_greedy,$city_matrix),$time);
+        
         printf("--------------------------------------------------------------------------\n");
 
         //Itterative initial
+        $start = microtime(1);
         $itterative = interative_random($num_cities,$visited,$city_matrix);
-        $itterative_heuristic = greedy_heuristic($itterative,$city_matrix);
-        $itterative_greedy = greedy_random($itterative,$city_matrix,0.9);
+        $stop = microtime(1);
+        $time = $stop - $start;
+        printf("Itterative--> Initial: %d -->time: %f\n", distance_calc($itterative,$city_matrix),$time);
 
-        printf("Itterative--> Initial: %d\n", distance_calc($itterative,$city_matrix));
-        printf("Itterative-->Heuristic: %d\n", distance_calc($itterative_heuristic,$city_matrix));
-        printf("Itterative-->Greedy Random: %d\n", distance_calc($itterative_greedy,$city_matrix));
+        $start = microtime(1);
+        $itterative_heuristic = greedy_heuristic($itterative,$city_matrix);
+        $stop = microtime(1);
+        $time = $stop - $start;
+        printf("Itterative-->Heuristic: %d -->time: %f\n", distance_calc($itterative_heuristic,$city_matrix),$time);
+
+        $start = microtime(1);
+        $itterative_greedy = greedy_random($itterative,$city_matrix,0.9);
+        $stop = microtime(1);
+        $time = $stop - $start;
+        printf("Itterative-->Greedy Random: %d -->time: %f\n", distance_calc($itterative_greedy,$city_matrix),$time);
+
         printf("--------------------------------------------------------------------------\n");
 
         //Greedy initial
+        $start = microtime(1);
         $greedy = greedy_algorithm($num_cities,$visited,$city_matrix);
-        $greedy_heuristic = greedy_heuristic($greedy,$city_matrix);
-        $greedy_greedy = greedy_random($greedy,$city_matrix,0.9);
-        
+        $stop = microtime(1);
+        $time = $stop - $start;
+        printf("Greedy--> Initial: %d -->time: %f\n", distance_calc($greedy,$city_matrix),$time);
 
-        printf("Greedy--> Initial: %d\n", distance_calc($greedy,$city_matrix));
-        printf("Greedy-->Heuristic: %d\n", distance_calc($greedy_heuristic,$city_matrix));
-        printf("Greedy-->Greedy Random: %d\n", distance_calc($greedy_greedy,$city_matrix));
+        $start = microtime(1);
+        $greedy_heuristic = greedy_heuristic($greedy,$city_matrix);
+        $stop = microtime(1);
+        $time = $stop - $start;
+        printf("Greedy-->Heuristic: %d -->time: %f\n", distance_calc($greedy_heuristic,$city_matrix),$time);
+
+        $start = microtime(1);
+        $greedy_greedy = greedy_random($greedy,$city_matrix,0.9);
+        $stop = microtime(1);
+        $time = $stop - $start;
+        printf("Greedy-->Greedy Random: %d -->time: %f\n", distance_calc($greedy_greedy,$city_matrix),$time);      
+
         printf("--------------------------------------------------------------------------\n");
 
         exit(0);
