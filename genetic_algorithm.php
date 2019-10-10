@@ -6,16 +6,16 @@ $object_weight = array(2,7,6,4,8,9,1,9,6,5);
 $object_value = array(1,73,36,89,9,19,50,62,38,99);
 
 //create two inital knapsacks 
-$knapsack1 = createNapsack($object_weight);
-$knapsack2 = createNapsack($object_weight);
+$knapsack1 = create_napsack($object_weight);
+$knapsack2 = create_napsack($object_weight);
 
 $optimal_knapsack = genetic_algorithm($knapsack1,$knapsack2,$object_value,$object_weight);
 
-printf("Knapsack 1 -> weight: %d value: %d \n", totalWeight($knapsack1, $object_weight), totalValue($knapsack1,$object_value) ); 
-printf("Knapsack 2 -> weight: %d value: %d\n", totalWeight($knapsack2, $object_weight), totalValue($knapsack2,$object_value)); 
-printf("Optimal Napsack -> weight: %d value: %d\n", totalWeight($optimal_knapsack, $object_weight), totalValue($optimal_knapsack,$object_value)); 
+printf("Knapsack 1 -> weight: %d value: %d \n", total_weight($knapsack1, $object_weight), total_value($knapsack1,$object_value) ); 
+printf("Knapsack 2 -> weight: %d value: %d\n", total_weight($knapsack2, $object_weight), total_value($knapsack2,$object_value)); 
+printf("Optimal Napsack -> weight: %d value: %d\n", total_weight($optimal_knapsack, $object_weight), total_value($optimal_knapsack,$object_value)); 
 	
-function createNapsack($object_weight){
+function create_napsack($object_weight){
 	$knapsack = array(0,0,0,0,0,0,0,0,0,0);
 	$weight = 0;
 
@@ -81,11 +81,11 @@ function genetic_algorithm($parent1,$parent2,$object_value,$object_weight){
 		}
 
 		//checks to make sure the total weight of the knapsack does not go over MAX_WEIGHT
-		while(totalWeight($offspring1, $object_weight) > MAX_WEIGHT) {
+		while(total_weight($offspring1, $object_weight) > MAX_WEIGHT) {
 			$offspring1[array_search(1, $offspring1) ] = 0; //reduce weight until solution is feasible
 		}
 
-		while(totalWeight($offspring2, $object_weight) > MAX_WEIGHT) {
+		while(total_weight($offspring2, $object_weight) > MAX_WEIGHT) {
 			$offspring2[array_search(1, $offspring2) ] = 0; //reduce weight until solution is feasible
 		}		
 
@@ -93,10 +93,10 @@ function genetic_algorithm($parent1,$parent2,$object_value,$object_weight){
 		$family = array($parent1,$parent2,$offspring1,$offspring2);
 
 		$values = array(
-			0 => totalValue($parent1,$object_value), 
-			1 => totalValue($parent2,$object_value),
-			2 => totalValue($offspring1,$object_value),
-			3 => totalValue($offspring2,$object_value));
+			0 => total_value($parent1,$object_value), 
+			1 => total_value($parent2,$object_value),
+			2 => total_value($offspring1,$object_value),
+			3 => total_value($offspring2,$object_value));
 
 		arsort($values); // sort descending according to the total values
 		$keys = array_keys($values); // get the keys
@@ -110,7 +110,7 @@ function genetic_algorithm($parent1,$parent2,$object_value,$object_weight){
 	return $parent1; //return the best result
 }
 
-function totalWeight($knapsack, $object_weight){
+function total_weight($knapsack, $object_weight){
 	//returns the total weight of the objects in the napsack given as argument one.
 	$weight = 0;
 
@@ -123,7 +123,7 @@ function totalWeight($knapsack, $object_weight){
 	return $weight;
 }
 
-function totalValue($knapsack, $object_value){
+function total_value($knapsack, $object_value){
 	//returns the total value of the objects in the napsack given as argument one
 	$value = 0;
 
