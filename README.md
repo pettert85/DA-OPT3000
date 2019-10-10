@@ -1,6 +1,7 @@
 # Compulsory School Assignments:
 
 **Traveling salesman problem using three different algorithms for an initial solution, aswell as a 2 algirithms for improvement of these**
+
 In this assignment , we are going to solve the travelling salesman problem.
 The number of cities is a graph  having 500. Each city is connected to all remaining cities. This means that a graph with 20 cities will have 19 edges.
 
