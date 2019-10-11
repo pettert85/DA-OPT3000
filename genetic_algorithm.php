@@ -2,10 +2,11 @@
 
 define('MAX_WEIGHT', 25); //Max weight of knapsack
 
+//Initialising the weight and values of the objects to some random numbers.
 $object_weight = array(2,7,6,4,8,9,1,9,6,5);
 $object_value = array(1,73,36,89,9,19,50,62,38,99);
 
-//create two inital knapsacks 
+//create two inital knapsacks that will be used as parents.
 $knapsack1 = create_napsack($object_weight);
 $knapsack2 = create_napsack($object_weight);
 
@@ -16,7 +17,8 @@ printf("Knapsack 2 -> weight: %d value: %d\n", total_weight($knapsack2, $object_
 printf("Optimal Napsack -> weight: %d value: %d\n", total_weight($optimal_knapsack, $object_weight), total_value($optimal_knapsack,$object_value)); 
 	
 function create_napsack($object_weight){
-	$knapsack = array(0,0,0,0,0,0,0,0,0,0);
+	$knapsack = array(0,0,0,0,0,0,0,0,0,0); //0's means item is not selected, and 1's mean selected
+	
 	$weight = 0;
 
 	do{
