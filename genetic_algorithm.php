@@ -1,26 +1,62 @@
 <?php
 
-define('MAX_WEIGHT', 30); //Max weight of kknapsack
+define('MAX_WEIGHT', 25); //Max weight of knapsack
 
 //Initialising the weight and values of the objects to some random numbers.
-$object_weight = array(2,7,6,4,8,9,1,9,6,5);
-$object_value = array(1,73,36,89,9,19,50,62,38,99);
+$object_weight = array(2,1,6,9,8,9,1,9,6,2);
+$object_value = array(1,73,36,89,9,19,50,62,38,82);
 
-// We  generate a population of four individuals first (kknapsacks)
-$kknapsacks = array(
+//We  generate a population of four individuals first
+$knapsacks = array(
 	create_knapsack($object_weight),
 	create_knapsack($object_weight),
 	create_knapsack($object_weight),
 	create_knapsack($object_weight));
 
+printf("%-27s","Weights: ");
+for($i = 0; $i < count($object_weight); $i++){
+	printf(" %d ",$object_weight[$i]);
+}
 
-$optimal_kknapsack = genetic_algorithm($kknapsacks,$object_value,$object_weight);
+printf("\n");
 
-printf("Optimized knapsack -> weight: %d value: %d\n", total_weight($optimal_kknapsack, $object_weight), total_value($optimal_kknapsack,$object_value)); 
+printf("%-27s","Values: ");
+for($i = 0; $i < count($object_value); $i++){
+	printf(" %d ",$object_value[$i]);
+}
+
+printf("\nMaximum weight of knapsack: %d\n",MAX_WEIGHT);
+
+printf("\n");
+
+//print out the initial knapsacks
+printf("%-20s %-35s %-25s %-2s\n", "Name", "Array", "Weight", "Value");
+for($i = 0; $i < count($knapsacks); $i++){
+	 printf("%-8s %-11d","Knapsack",$i);
+
+	 	for($j = 0; $j < count($knapsacks[$i]); $j++){
+			printf(" %d ", $knapsacks[$i][$j]);
+		}
+
+	 printf("%9d %26d\n",total_weight($knapsacks[$i],$object_weight),total_value($knapsacks[$i],$object_value));
+}
+
+//find an optimized solution
+$optimized_knapsack = genetic_algorithm($knapsacks,$object_value,$object_weight);
+
+
+//print out the optimized knapsack
+printf("%-20s","Optimized Knapsack");
+
+for($i = 0; $i < count($optimized_knapsack); $i++){
+	printf(" %d ", $optimized_knapsack[$i]);
+}
+
+printf("%9d %26d\n",total_weight($optimized_knapsack,$object_weight),total_value($optimized_knapsack,$object_value));
 
 
 function genetic_algorithm($population,$object_value,$object_weight){
-	$max_tries = 10000;
+	$max_tries = 100000;
 
 	//find fitness of population and which couple to mate
 	$fitness = array(
@@ -132,7 +168,7 @@ function create_knapsack($object_weight){
 				$weight += $object_weight[$i];
 
 				if($weight < MAX_WEIGHT){
-					$kknapsack[$i] = 1;
+					$knapsack[$i] = 1;
 				}
 			}
 		}
@@ -140,12 +176,12 @@ function create_knapsack($object_weight){
 	return $knapsack;
 }
 
-function total_weight($kknapsack, $object_weight){
+function total_weight($knapsack, $object_weight){
 	//returns the total weight of the objects in the knapsack given as argument one.
 	$weight = 0;
 
-	for($i = 0; $i < count($kknapsack); $i++){
-		if($kknapsack[$i] == 1 ){
+	for($i = 0; $i < count($knapsack); $i++){
+		if($knapsack[$i] == 1 ){
 			$weight += $object_weight[$i];
 		}
 	}
@@ -153,12 +189,12 @@ function total_weight($kknapsack, $object_weight){
 	return $weight;
 }
 
-function total_value($kknapsack, $object_value){
+function total_value($knapsack, $object_value){
 	//returns the total value of the objects in the knapsack given as argument one
 	$value = 0;
 
-	for($i = 0; $i < count($kknapsack); $i++){
-		if($kknapsack[$i] == 1 ){
+	for($i = 0; $i < count($knapsack); $i++){
+		if($knapsack[$i] == 1 ){
 			$value += $object_value[$i];
 		}
 	}
