@@ -20,15 +20,9 @@ printf("Optimized Napsack -> weight: %d value: %d\n", total_weight($optimal_knap
 
 
 function genetic_algorithm($population,$object_value,$object_weight){
-/*	uses a genetic approach with parents and offspring in order to improve the result
-	of the napsack. The two family members with highest total values are kept each round.
-	The algorithm runs in a loop until the two family members with highest values are eqaual and
-	the result is returned back to the caller. */
-
-	//find fitness of population and whom to mate
-
 	$max_tries = 10000;
 
+	//find fitness of population and which couple to mate
 	$fitness = array(
 		0 => total_value($population[0],$object_value), 
 		1 => total_value($population[1],$object_value),
