@@ -34,6 +34,7 @@ genetic_algorithm($object_value,$object_weight);
 
 function genetic_algorithm($object_value,$object_weight){
 	$total_best_weight = 0;
+	$iteration_number = 0;
 	$population = [];
 	$fitness = [];
 
@@ -167,9 +168,11 @@ function genetic_algorithm($object_value,$object_weight){
 				printf(" %d ", $population[$keys[0]][$i]);
 			}
 
-			printf("%9d %26d\n",total_weight($population[$keys[0]],$object_weight),total_value($population[$keys[0]],$object_value));
+			printf("%9d %26d",total_weight($population[$keys[0]],$object_weight),total_value($population[$keys[0]],$object_value));
+			printf(" - Number of iterations when found: %d\n", $iteration_number);
 		}
 
+		$iteration_number++;
 	}while(true);
 
 
