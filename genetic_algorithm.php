@@ -81,30 +81,54 @@ function genetic_algorithm($object_value,$object_weight){
 
 			//mutate according to the probability of mutation
 			if ( (mt_rand(0, 100) / 100) <= MUTATION_PROBABILITY ){
-				$index1 = mt_rand(0, ARRAY_SIZE-1);
+				$index = mt_rand(0, ARRAY_SIZE-1);
+				/*$index1 = mt_rand(0, ARRAY_SIZE-1);
 				do{
 					$index2 = mt_rand(0, ARRAY_SIZE-1);
-				}while($index1 == $index2);
+				}while($index1 == $index2);*/
 			
 				if(mt_rand(0, 1) == 0){
+					
+					//Single flip mutation
+					if( $offspring1[$index] == 0 ){
+						$offspring1[$index] = 1;
+					}
+
+					else{
+						$offspring1[$index] = 0;
+					}
+				/*	
+					//Two point mutation
 					for($i = min($index1,$index2); $i <= max($index1,$index2); $i++){
 						if($offspring1[$i] == 1 ){
-							$offspring1[$i] = 1;
+							$offspring1[$i] = 0;
 						}
 
 						else $offspring1[$i] = 1;
-					}
+				}*/
 				}
 
 				else{
+					
+					//Single flip mutation
+					if( $offspring2[$index] == 0 ){
+						$offspring2[$index] = 1;
+					}
+
+					else{
+						$offspring2[$index] = 0;
+					}
+			
+				/*		
+					//Two point mutation
 					for($i = min($index1,$index2); $i <= max($index1,$index2); $i++){
 						if($offspring2[$i] == 1 ){
-							$offspring2[$i] = 1;
+							$offspring2[$i] = 0;
 						}
 
 						else $offspring2[$i] = 1;
 					}
-
+				*/
 
 				}
 				
