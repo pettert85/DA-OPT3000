@@ -1,42 +1,40 @@
 <?php
 
-define('MAX_WEIGHT', 50); //Max weight of knapsack
-define('POPULATION_SIZE', 10);
-define('ARRAY_SIZE', 10);
-define('MUTATION_PROBABILITY', '0.05'); 
+genetic_algorithm();
 
-//Initialising the weight and values of the objects to some random numbers.
-$object_weight = array(2,4,6,2,8,9,1,9,6,5);
-$object_value = array(23,55,36,89,32,19,6,54,38,99);
+function genetic_algorithm(){
+	define('MAX_WEIGHT', 50); 
+	define('POPULATION_SIZE', 10);
+	define('ARRAY_SIZE', 10);
+	define('MUTATION_PROBABILITY', '1'); 
 
-printf("Maximum weight of knapsack: %d\n",MAX_WEIGHT);
-printf("Probability of mutation: %.2f\n",MUTATION_PROBABILITY);
-printf("Number of objects (array): %d\n",ARRAY_SIZE);
-printf("Population size: %d\n\n",POPULATION_SIZE);
-
-printf("%-22s","Weights: ");
-for($i = 0; $i < count($object_weight); $i++){
-	printf(" %d ",$object_weight[$i]);
-}
-
-printf("\n");
-
-printf("%-22s","Values: ");
-for($i = 0; $i < count($object_value); $i++){
-	printf(" %d ",$object_value[$i]);
-}
-
-printf("\n\n");
-
-//run algorithm
-genetic_algorithm($object_value,$object_weight);
-
-
-function genetic_algorithm($object_value,$object_weight){
+	$object_weight = array(2,4,6,2,8,9,1,9,6,5);
+	$object_value = array(23,55,36,89,32,19,6,54,38,99);
+	
 	$total_best_weight = 0;
-	$iteration_number = 0;
+	$generation = 0;
 	$population = [];
-	$fitness = [];
+
+
+
+	printf("Maximum weight of knapsack: %d\n",MAX_WEIGHT);
+	printf("Probability of mutation: %.2f\n",MUTATION_PROBABILITY);
+	printf("Number of objects (array): %d\n",ARRAY_SIZE);
+	printf("Population size: %d\n\n",POPULATION_SIZE);
+
+	printf("%-22s","Weights: ");
+	for($i = 0; $i < count($object_weight); $i++){
+		printf(" %d ",$object_weight[$i]);
+	}
+
+	printf("\n");
+
+	printf("%-22s","Values: ");
+	for($i = 0; $i < count($object_value); $i++){
+		printf(" %d ",$object_value[$i]);
+	}
+
+	printf("\n\n");
 
 	//We  generate a population of some random knapsacks first
 	for($i = 0; $i < POPULATION_SIZE; $i++){
@@ -55,8 +53,9 @@ function genetic_algorithm($object_value,$object_weight){
 	 	printf("%9d %26d\n",total_weight($population[$i],$object_weight),total_value($population[$i],$object_value));
 	}
 	
+
+
 	do {
-		//first clone the parents before we alter the genes
 		$offsprings = $population;
 
 		$index1 = mt_rand(0, 9);
@@ -82,11 +81,6 @@ function genetic_algorithm($object_value,$object_weight){
 			//mutate according to the probability of mutation
 			if ( (mt_rand(0, 100) / 100) <= MUTATION_PROBABILITY ){
 				$index = mt_rand(0, ARRAY_SIZE-1);
-				
-				/*$index1 = mt_rand(0, ARRAY_SIZE-1);
-				do{
-					$index2 = mt_rand(0, ARRAY_SIZE-1);
-				}while($index1 == $index2);*/
 			
 				if(mt_rand(0, 1) == 0){
 					$offspring1[mt_rand(0, ARRAY_SIZE-1)] = 1;
@@ -101,12 +95,6 @@ function genetic_algorithm($object_value,$object_weight){
 					else{
 						$offspring1[$index] = 0;
 					}*/
-				
-				/*	$temp = $offspring1[$index1];
-					$offspring1[$index1] = $offspring1[$index2];
-					$offspring1[$index2] = $temp;
-					*/
-				
 				}
 
 				else{
@@ -120,10 +108,6 @@ function genetic_algorithm($object_value,$object_weight){
 					else{
 						$offspring2[$index] = 0;
 					}*/
-			/*
-					$temp = $offspring2[$index1];
-					$offspring2[$index1] = $offspring2[$index2];
-					$offspring2[$index2] = $temp;*/
 				}
 				
 			} //mutation
@@ -142,13 +126,7 @@ function genetic_algorithm($object_value,$object_weight){
 		}
 
 		//find fitness of increased population
-		for($i = 0; $i < count($population); $i++){
-			$fitness[$i] = total_value($population[$i],$object_value);
-		}
-
-		arsort($fitness); // sort descending according to the total value of each individual
-
-		$keys = array_keys($fitness); // get the key positions
+		$keys = find_fitness($population,$object_value);
 		
 		//remove from population according to Darwins Law :)
 		for($i = count($keys) -1; $i >= POPULATION_SIZE; $i-- ){			
@@ -159,13 +137,7 @@ function genetic_algorithm($object_value,$object_weight){
 		$fitness = []; //empty old fitness array:
 		$population = array_values($population); //reindex array after unset
 
-		for($i = 0; $i < count($population); $i++){
-			$fitness[$i] = total_value($population[$i],$object_value);
-		}
-
-		arsort($fitness); // sort descending according to the total value of each individual
-
-		$keys = array_keys($fitness); // get the key positions
+		$keys = find_fitness($population,$object_value);
 		
 
 		//check to see if we got a new best, and if so, print it to the console
@@ -181,17 +153,17 @@ function genetic_algorithm($object_value,$object_weight){
 			}
 
 			printf("%9d %26d",total_weight($population[$keys[0]],$object_weight),total_value($population[$keys[0]],$object_value));
-			printf(" - Number of iterations when found: %d\n", $iteration_number);
+			printf(" - Generation number when found: %d\n", $generation);
 		}
 
-		$iteration_number++;
-	}while(true);
+		$generation++;
+
+	}while($generation < 1000);
 
 
 	//return $population[$keys[0]]; //return the best solution found
 
 }
-
 
 function create_knapsack($object_weight){
 	$knapsack = []; //0's means item is not selected, and 1's mean selected
@@ -242,4 +214,16 @@ function total_value($knapsack, $object_value){
 	return $value;
 }
 
+function find_fitness($population,$object_value){
+	//returns the array indexes sorted descending after fitness
+	for($i = 0; $i < count($population); $i++){
+			$fitness[$i] = total_value($population[$i],$object_value);
+		}
+
+		arsort($fitness); // sort descending according to the total value of each individual
+
+		$keys = array_keys($fitness); // get the key positions
+
+		return $keys;
+}
 ?>
