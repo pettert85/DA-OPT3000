@@ -164,8 +164,8 @@ function genetic_algorithm($object_value,$object_weight){
 		$keys = array_keys($fitness); // get the key positions
 		
 		//remove from population according to Darwins Law :)
-		for($i = count($keys) -1; $i >= POPULATION_SIZE; $i-- ){
-			unset($population[$keys[$i]]);
+		for($i = count($keys) -1; $i >= POPULATION_SIZE; $i-- ){			
+			unset($population[$keys[$i]]);	
 		}
 		
 		//arrange according to populations fittness again
@@ -179,7 +179,8 @@ function genetic_algorithm($object_value,$object_weight){
 		arsort($fitness); // sort descending according to the total value of each individual
 
 		$keys = array_keys($fitness); // get the key positions
-	
+		
+
 		//check to see if we got a new best, and if so, print it to the console
 		if(total_weight($population[$keys[0]],$object_weight) > $total_best_weight){
 
