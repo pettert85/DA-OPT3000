@@ -1,17 +1,13 @@
 <?php
 
-define('MAX_WEIGHT', 11); //Max weight of knapsack
-define('POPULATION_SIZE', 8);
+define('MAX_WEIGHT', 50); //Max weight of knapsack
+define('POPULATION_SIZE', 10);
 define('ARRAY_SIZE', 10);
 define('MUTATION_PROBABILITY', '0.05'); 
 
 //Initialising the weight and values of the objects to some random numbers.
 $object_weight = array(2,4,6,2,8,9,1,9,6,5);
 $object_value = array(23,55,36,89,32,19,6,54,38,99);
-//11.5 - 13.75 - 6 - 44.5 -  4 - 2.1 - 6 - 6 - 6.33 - 19.8
-//  0      1     0     1     0   0     0   0     0     1
-//vekt 2 5 4
-//value 55 + 89 + 99 = 243
 
 printf("Maximum weight of knapsack: %d\n",MAX_WEIGHT);
 printf("Probability of mutation: %.2f\n",MUTATION_PROBABILITY);
@@ -93,15 +89,18 @@ function genetic_algorithm($object_value,$object_weight){
 				}while($index1 == $index2);*/
 			
 				if(mt_rand(0, 1) == 0){
-					
-					//Single flip mutation
+					$offspring1[mt_rand(0, ARRAY_SIZE-1)] = 1;
+					$offspring1[mt_rand(0, ARRAY_SIZE-1)] = 0;
+				
+					/*//Single flip mutation
 					if( $offspring1[$index] == 0 ){
 						$offspring1[$index] = 1;
+
 					}
 
 					else{
 						$offspring1[$index] = 0;
-					}
+					}*/
 				
 				/*	$temp = $offspring1[$index1];
 					$offspring1[$index1] = $offspring1[$index2];
@@ -111,15 +110,16 @@ function genetic_algorithm($object_value,$object_weight){
 				}
 
 				else{
-					
-					//Single flip mutation
+					$offspring1[mt_rand(0, ARRAY_SIZE-1)] = 1;
+					$offspring1[mt_rand(0, ARRAY_SIZE-1)] = 0;
+				/*	//Single flip mutation
 					if( $offspring2[$index] == 0 ){
 						$offspring2[$index] = 1;
 					}
 
 					else{
 						$offspring2[$index] = 0;
-					}
+					}*/
 			/*
 					$temp = $offspring2[$index1];
 					$offspring2[$index1] = $offspring2[$index2];
