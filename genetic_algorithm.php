@@ -4,14 +4,14 @@ genetic_algorithm();
 
 function genetic_algorithm(){
 	define('MAX_WEIGHT', 50); 
-	define('POPULATION_SIZE', 10);
+	define('POPULATION_SIZE', 4);
 	define('ARRAY_SIZE', 10);
-	define('MUTATION_PROBABILITY', '1'); 
+	define('MUTATION_PROBABILITY', '0.1'); 
 
 	$object_weight = array(2,4,6,2,8,9,1,9,6,5);
 	$object_value = array(23,55,36,89,32,19,6,54,38,99);
 	
-	$total_best_weight = 0;
+	$total_best_value = 0;
 	$generation = 0;
 	$population = [];
 
@@ -52,11 +52,11 @@ function genetic_algorithm(){
 
 	 	printf("%9d %26d\n",total_weight($population[$i],$object_weight),total_value($population[$i],$object_value));
 	}
-	
-
 
 	do {
 		$offsprings = $population;
+
+
 
 		$index1 = mt_rand(0, 9);
 		do{
@@ -78,39 +78,43 @@ function genetic_algorithm(){
 			}
 
 
-			//mutate according to the probability of mutation
-			if ( (mt_rand(0, 100) / 100) <= MUTATION_PROBABILITY ){
-				$index = mt_rand(0, ARRAY_SIZE-1);
+				//mutate according to the probability of mutations
+				if ( (mt_rand(0, 100) / 100) <= MUTATION_PROBABILITY ){
+						//shake system by creating new random offsprings every 100th iteration
+					if( mt_rand(0, 1) == 0 ){
+						$offspring1 = create_knapsack($object_weight);
+						$offspring2 = create_knapsack($object_weight);
+					}
+
+					else{
+						$index = mt_rand(0, ARRAY_SIZE-1);
+						
+						if(mt_rand(0, 1) == 0){
+							//Single flip mutation
+							if( $offspring1[$index] == 0 ){
+								$offspring1[$index] = 1;
+
+							}
+
+							else{
+								$offspring1[$index] = 0;
+							}
+						}
+
+						else{
+							//Single flip mutation
+							if( $offspring2[$index] == 0 ){
+								$offspring2[$index] = 1;
+							}
+
+							else{
+								$offspring2[$index] = 0;
+							}
+						}
+					}
+					
+				} //mutation
 			
-				if(mt_rand(0, 1) == 0){
-					$offspring1[mt_rand(0, ARRAY_SIZE-1)] = 1;
-					$offspring1[mt_rand(0, ARRAY_SIZE-1)] = 0;
-				
-					/*//Single flip mutation
-					if( $offspring1[$index] == 0 ){
-						$offspring1[$index] = 1;
-
-					}
-
-					else{
-						$offspring1[$index] = 0;
-					}*/
-				}
-
-				else{
-					$offspring1[mt_rand(0, ARRAY_SIZE-1)] = 1;
-					$offspring1[mt_rand(0, ARRAY_SIZE-1)] = 0;
-				/*	//Single flip mutation
-					if( $offspring2[$index] == 0 ){
-						$offspring2[$index] = 1;
-					}
-
-					else{
-						$offspring2[$index] = 0;
-					}*/
-				}
-				
-			} //mutation
 
 			//make sure the weight off the newly created offsprings are a feasable solution, otherwise adjust their wight accordingly				
 			while(total_weight($offspring1, $object_weight) > MAX_WEIGHT) {
@@ -129,21 +133,24 @@ function genetic_algorithm(){
 		$keys = find_fitness($population,$object_value);
 		
 		//remove from population according to Darwins Law :)
+		if($population == 0){
+
+		}
 		for($i = count($keys) -1; $i >= POPULATION_SIZE; $i-- ){			
 			unset($population[$keys[$i]]);	
 		}
 		
 		//arrange according to populations fittness again
-		$fitness = []; //empty old fitness array:
+		//$fitness = []; //empty old fitness array:
 		$population = array_values($population); //reindex array after unset
 
 		$keys = find_fitness($population,$object_value);
 		
 
 		//check to see if we got a new best, and if so, print it to the console
-		if(total_weight($population[$keys[0]],$object_weight) > $total_best_weight){
+		if(total_value($population[$keys[0]],$object_value) > $total_best_value){
 
-			$total_best_weight = total_weight($population[$keys[0]],$object_weight);
+			$total_best_value = total_value($population[$keys[0]],$object_value);
 
 			//print out the optimized knapsack
 			printf("%-30s","New Best Knapsack");
