@@ -8,6 +8,10 @@ function genetic_algorithm(){
 	define('ARRAY_SIZE', 10);
 	define('MUTATION_PROBABILITY', '0.1'); 
 
+	//fclose(STDOUT);
+	//$STDOUT = fopen('results.txt', 'a');
+
+
 	$object_weight = array(2,4,6,2,8,9,1,9,6,5);
 	$object_value = array(23,55,36,89,32,19,6,54,38,99);
 	
@@ -167,7 +171,7 @@ function genetic_algorithm(){
 
 	}while($generation < 1000);
 
-
+	printf("\n\n");
 	//return $population[$keys[0]]; //return the best solution found
 
 }
